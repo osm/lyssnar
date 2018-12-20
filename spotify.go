@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 
 	"golang.org/x/oauth2"
 )
@@ -64,6 +65,15 @@ start:
 	cli := a.conf.Client(oauth2.NoContext, t)
 	res, err := cli.Get("https://api.spotify.com/v1/me/player/currently-playing")
 	if err != nil {
+		// Let's delete the user if the token has been revoked, we'll
+		// return a nil, nil instead of an error here to handle the
+		// results more gracefully, the next time the user's page is
+		// accessed it will show as not registered.
+		if strings.Contains(err.Error(), "Refresh token revoked") {
+			a.deleteUser(id)
+			return nil, nil
+		}
+
 		log.Printf("failed to get https://api.spotify.com/v1/me/player/currently-playing, error: %s", err.Error())
 		return nil, err
 	}
