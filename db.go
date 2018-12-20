@@ -73,3 +73,8 @@ func (a *app) storeTokens(id, at, rt string) error {
 
 	return nil
 }
+
+// deleteUser removes the credential for the given user id.
+func (a *app) deleteUser(id string) {
+	a.db.Exec("DELETE FROM credential WHERE id = $1", id)
+}
