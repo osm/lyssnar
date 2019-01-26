@@ -55,3 +55,54 @@ func (a *app) currentlyPlayingAPI(w http.ResponseWriter, r *http.Request, id str
 	j, _ := json.Marshal(cpo)
 	fmt.Fprintf(w, string(j))
 }
+
+// currentlyPlayingShortAPI returns a formatted text with the currently
+// playing song for the given user.
+func (a *app) currentlyPlayingShortAPI(w http.ResponseWriter, r *http.Request, id string) {
+	// Get the access and refresh tokens from the database for
+	// the given user.
+	// If the tokens are empty we'll know that the user hasn't authorized
+	// his/her account.
+	at, rt := a.getTokens(id)
+	if at == "" {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, newErrorAPI(http.StatusNotFound, "not found"))
+		return
+	}
+
+	// Get the currently playing object for the requested user id.
+	cpo, err := a.getCurrentlyPlayingObject(id, at, rt)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, newErrorAPI(http.StatusInternalServerError, "internal server error"))
+		return
+	}
+
+	// This case means that the user isn't currently playing anything.
+	if (cpo == nil && err == nil) || (!cpo.IsPlaying) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, newErrorAPI(http.StatusOK, "user is not playing anything"))
+		return
+	}
+
+	// Format the data.
+	var artists string
+	for _, a := range cpo.Item.Artists {
+		if len(artists) == 0 {
+			artists = a.Name
+		} else {
+			artists = artists + ", " + a.Name
+		}
+	}
+
+	url := cpo.Item.ExternalURLs["spotify"]
+	uri := cpo.Item.ID
+	track := cpo.Item.Name
+	message := fmt.Sprintf("%s - %s @ %s / spotify:track:%s", artists, track, url, uri)
+
+	// Wrap it in a map that we can JSON encode and return it.
+	out := map[string]string{"playing": message}
+	j, _ := json.Marshal(out)
+	fmt.Fprintf(w, string(j))
+	fmt.Fprintf(w, message)
+}
