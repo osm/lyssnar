@@ -104,5 +104,4 @@ func (a *app) currentlyPlayingShortAPI(w http.ResponseWriter, r *http.Request, i
 	out := map[string]string{"playing": message}
 	j, _ := json.Marshal(out)
 	fmt.Fprintf(w, string(j))
-	fmt.Fprintf(w, message)
 }
