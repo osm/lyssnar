@@ -16,9 +16,9 @@ var (
 	rFavicon16                = regexp.MustCompile(`^/favicon-16x16.png$`)
 	rFavicon32                = regexp.MustCompile(`^/favicon-32x32.png$`)
 	rLanding                  = regexp.MustCompile(`^/$`)
-	rCurrentlyPlaying         = regexp.MustCompile(`^/~([a-zA-Z-]+)$`)
-	rCurrentlyPlayingAPI      = regexp.MustCompile(`^/v1/user/([a-zA-Z-]+)/currently-playing$`)
-	rCurrentlyPlayingShortAPI = regexp.MustCompile(`^/v1/user/([a-zA-Z-]+)/currently-playing-short$`)
+	rCurrentlyPlaying         = regexp.MustCompile(`^/~([a-zA-Z0-9-]+)$`)
+	rCurrentlyPlayingAPI      = regexp.MustCompile(`^/v1/user/([a-zA-Z0-9-]+)/currently-playing$`)
+	rCurrentlyPlayingShortAPI = regexp.MustCompile(`^/v1/user/([a-zA-Z0-9-]+)/currently-playing-short$`)
 )
 
 // route handles all http requests and routes them to the appropriate
