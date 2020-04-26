@@ -261,7 +261,7 @@ type TrackObjectFull struct {
 	// number is the number on the specified disc.
 	TrackNumber int `json:"track_number"`
 
-	// The object type: “track”.
+	// The object type: “track” or "episode".
 	Type string `json:"type"`
 
 	// The Spotify URI for the track.
@@ -269,6 +269,23 @@ type TrackObjectFull struct {
 
 	// Whether or not the track is from a local file.
 	IsLocal bool `json:"is_local"`
+
+	Show Show `json:"show"`
+}
+
+// Show contains information about a show, which can be a podcast.
+type Show struct {
+	// External URLs for this context.
+	ExternalURLs map[string]string `json:"external_urls"`
+
+	// Name of the show.
+	Name string `json:"name"`
+
+	// The cover art for the show in various sizes, widest first.
+	Images []ImageObject `json:"images"`
+
+	// ID of the show.
+	ID string `json:"id"`
 }
 
 // UserObject contains a partial user object as is fetched without any

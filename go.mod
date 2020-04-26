@@ -1,5 +1,7 @@
 module github.com/osm/lyssnar
 
+go 1.14
+
 require (
 	github.com/lib/pq v1.0.0
 	github.com/osm/migrator v1.0.0

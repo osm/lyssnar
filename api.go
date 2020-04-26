@@ -87,12 +87,17 @@ func (a *app) currentlyPlayingShortAPI(w http.ResponseWriter, r *http.Request, i
 
 	// Format the data.
 	var artists string
-	for _, a := range cpo.Item.Artists {
-		if len(artists) == 0 {
-			artists = a.Name
-		} else {
-			artists = artists + ", " + a.Name
+
+	if cpo.Item.Type == "track" {
+		for _, a := range cpo.Item.Artists {
+			if len(artists) == 0 {
+				artists = a.Name
+			} else {
+				artists = artists + ", " + a.Name
+			}
 		}
+	} else {
+		artists = cpo.Item.Show.Name
 	}
 
 	url := cpo.Item.ExternalURLs["spotify"]

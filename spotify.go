@@ -63,7 +63,7 @@ func (a *app) getCurrentlyPlayingObject(id, at, rt string) (*CurrentlyPlayingObj
 	t := &oauth2.Token{AccessToken: at, RefreshToken: rt}
 start:
 	cli := a.conf.Client(oauth2.NoContext, t)
-	res, err := cli.Get("https://api.spotify.com/v1/me/player/currently-playing")
+	res, err := cli.Get("https://api.spotify.com/v1/me/player/currently-playing?additional_types=track,episode")
 	if err != nil {
 		// Let's delete the user if the token has been revoked, we'll
 		// return a nil, nil instead of an error here to handle the

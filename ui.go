@@ -107,30 +107,45 @@ func (a *app) currentlyPlaying(w http.ResponseWriter, r *http.Request, id string
 		return
 	}
 
-	// Extract the correct image URL.
-	imageURL := ""
-	for _, i := range cpo.Item.Album.Images {
-		if i.Height > 200 && i.Height < 500 {
-			imageURL = i.URL
+	if cpo.Item.Type == "track" {
+		// Handle tracks
+		imageURL := ""
+		for _, i := range cpo.Item.Album.Images {
+			if i.Height > 200 && i.Height < 500 {
+				imageURL = i.URL
+			}
 		}
-	}
 
-	// Concatenate all artists into one string.
-	artists := ""
-	for _, a := range cpo.Item.Artists {
-		if artists == "" {
-			artists = a.Name
-		} else {
-			artists = fmt.Sprintf("%s, %s", artists, a.Name)
+		artists := ""
+		for _, a := range cpo.Item.Artists {
+			if artists == "" {
+				artists = a.Name
+			} else {
+				artists = fmt.Sprintf("%s, %s", artists, a.Name)
+			}
 		}
-	}
 
-	// Render the user template.
-	tCurrentlyPlaying.Execute(w, map[string]string{
-		"id":     id,
-		"artist": artists,
-		"track":  cpo.Item.Name,
-		"url":    cpo.Item.ExternalURLs["spotify"],
-		"image":  imageURL,
-	})
+		tCurrentlyPlaying.Execute(w, map[string]string{
+			"id":     id,
+			"artist": artists,
+			"track":  cpo.Item.Name,
+			"url":    cpo.Item.ExternalURLs["spotify"],
+			"image":  imageURL,
+		})
+	} else {
+		// Handle episodes.
+		imageURL := ""
+		for _, i := range cpo.Item.Show.Images {
+			if i.Height > 200 && i.Height < 500 {
+				imageURL = i.URL
+			}
+		}
+		tCurrentlyPlaying.Execute(w, map[string]string{
+			"id":     id,
+			"artist": cpo.Item.Show.Name,
+			"track":  cpo.Item.Name,
+			"url":    cpo.Item.Show.ExternalURLs["spotify"],
+			"image":  imageURL,
+		})
+	}
 }
