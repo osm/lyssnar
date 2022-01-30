@@ -1,0 +1,28 @@
+# github.com/golang/protobuf v1.3.1
+github.com/golang/protobuf/proto
+# github.com/lib/pq v1.0.0
+## explicit
+github.com/lib/pq
+github.com/lib/pq/oid
+# github.com/osm/migrator v1.0.0
+## explicit
+github.com/osm/migrator
+github.com/osm/migrator/repository
+# golang.org/x/net v0.0.0-20190603091049-60506f45cf65
+## explicit
+golang.org/x/net/context
+golang.org/x/net/context/ctxhttp
+# golang.org/x/oauth2 v0.0.0-20181120190819-8f65e3013eba
+## explicit
+golang.org/x/oauth2
+golang.org/x/oauth2/internal
+golang.org/x/oauth2/spotify
+# google.golang.org/appengine v1.6.7
+## explicit
+google.golang.org/appengine/internal
+google.golang.org/appengine/internal/base
+google.golang.org/appengine/internal/datastore
+google.golang.org/appengine/internal/log
+google.golang.org/appengine/internal/remote_api
+google.golang.org/appengine/internal/urlfetch
+google.golang.org/appengine/urlfetch
