@@ -21,6 +21,16 @@ func ToVersion(db *sql.DB, repo repository.Source, toVersion int) error {
 	return run(db, repo, toVersion)
 }
 
+// isSqlite checks if the connection is a sqlite connection.
+func isSqlite(db *sql.DB) bool {
+	var v string
+	if err := db.QueryRow("SELECT sqlite_version()").Scan(&v); err != nil {
+		return false
+	}
+
+	return true
+}
+
 // run executes the migrations found in the repository.
 func run(db *sql.DB, repo repository.Source, toVersion int) error {
 	// Make sure that the db connection is alive
@@ -29,11 +39,19 @@ func run(db *sql.DB, repo repository.Source, toVersion int) error {
 		return err
 	}
 
+	// Cast version to int when we are using a sqlite database.
+	var currentVersionQuery string
+	if isSqlite(db) {
+		currentVersionQuery = "SELECT version FROM migration ORDER BY cast(version AS int) DESC"
+	} else {
+		currentVersionQuery = "SELECT version FROM migration ORDER BY version DESC"
+	}
+
 	// Get the current version of the database schema
 	// If we can't find a migration table we assume that it has never been
 	// executed before and therefore we set the version to -1.
 	var currentVersion int
-	err = db.QueryRow("SELECT version FROM migration ORDER BY version DESC").Scan(&currentVersion)
+	err = db.QueryRow(currentVersionQuery).Scan(&currentVersion)
 	if err != nil {
 		currentVersion = -1
 	}
