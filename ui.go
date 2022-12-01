@@ -1,14 +1,18 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"path/filepath"
 
 	"golang.org/x/oauth2"
 )
+
+//go:embed ui
+var uiFS embed.FS
 
 // Collection of templates and data.
 var (
@@ -16,18 +20,18 @@ var (
 	dFavicon          string
 	dFavicon16        string
 	dFavicon32        string
-	tAuthorized       = template.Must(template.ParseFiles("./ui/authorized.html"))
-	tCurrentlyPlaying = template.Must(template.ParseFiles("./ui/currently-playing.html"))
-	tError            = template.Must(template.ParseFiles("./ui/error.html"))
-	tLanding          = template.Must(template.ParseFiles("./ui/landing.html"))
+	tAuthorized       = template.Must(template.ParseFS(uiFS, filepath.Join("ui", "authorized.html")))
+	tCurrentlyPlaying = template.Must(template.ParseFS(uiFS, filepath.Join("ui", "currently-playing.html")))
+	tError            = template.Must(template.ParseFS(uiFS, filepath.Join("ui", "error.html")))
+	tLanding          = template.Must(template.ParseFS(uiFS, filepath.Join("ui", "landing.html")))
 )
 
 // loadStaticFile reads the contents of the given file, if it can't find the
 // find it'll log a fatal error.
 func loadStaticFile(file string) string {
-	data, err := ioutil.ReadFile(file)
+	data, err := uiFS.ReadFile(file)
 	if err != nil {
-		log.Fatalf("can't find %s", file)
+		log.Fatalf("can't find %s, %v", file, err)
 	}
 	return string(data)
 }
@@ -35,12 +39,12 @@ func loadStaticFile(file string) string {
 func init() {
 	// Fetch the contents of the style sheets on init so that we don't
 	// have to do it on each request.
-	dCss = loadStaticFile("./ui/lyssnar.css")
+	dCss = loadStaticFile(filepath.Join("ui", "lyssnar.css"))
 
 	// Load the favicons.
-	dFavicon = loadStaticFile("./ui/favicon.ico")
-	dFavicon16 = loadStaticFile("./ui/favicon-16x16.png")
-	dFavicon32 = loadStaticFile("./ui/favicon-32x32.png")
+	dFavicon = loadStaticFile(filepath.Join("ui", "favicon.ico"))
+	dFavicon16 = loadStaticFile(filepath.Join("ui", "favicon-16x16.png"))
+	dFavicon32 = loadStaticFile(filepath.Join("ui", "favicon-32x32.png"))
 }
 
 // errorNotFound displays the 404 page.
